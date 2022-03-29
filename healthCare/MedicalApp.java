@@ -1,11 +1,18 @@
 //Packages
+package healthcare;
+import database_package.connection;
+import patient.Patient;
 
 //Imports
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 import java.util.Scanner;
+import com.mysql.jdbc.Connection;
 import java.util.ArrayList;
 
 //Thread Class
@@ -17,65 +24,16 @@ class Navigate implements Runnable {
     }
 }
 
-// Class 2
-class Patient {
-
-    // Variables
-    // Disease type;
-    String firstName, lastName, preffix;
-    int age, counter;
-    int idNum;
-    Date birthday, timeStamp = new Date();
-
-    // Constructors
-    public Patient() {
-    }
-
-    public Patient(String last, int id) {
-        this.lastName = last;
-        this.idNum = id;
-    }
-
-    public Patient(String name1, String name2, int id) {
-        this.firstName = name1;
-        this.lastName = name2;
-        this.idNum = id;
-        counter += 1;
-        System.out.println("Patient Added: " + timeStamp);
-    }
-
-    // Get First Name
-    public String getFirstName() {
-        return firstName;
-    }
-
-    // Get Last Name
-    public String getLastName() {
-        return lastName;
-    }
-
-    // Get User ID
-    public int getID() {
-        return idNum;
-    }
-
-    // Count Amount of Patients
-    public int getCount() {
-        return counter;
-    }
-
-    // Displays User Information
-    @Override
-    public String toString() {
-        return "\nFirst Name : " + firstName + "\nLast Name : " + lastName + "\nID : " + idNum;
-    }
-}
-
 // Application Main
 public class MedicalApp {
+    //jdbc
+    String database = connection.DB_URL;
+    String user = connection.user;
+    String password = connection.password;
+    Connection conn = (Connection) connection.con;
     public static void main(String[] args) throws IOException {
 
-        // Thread
+        //Thread
         Navigate t1 = new Navigate();
         Thread thread = new Thread(t1);
         thread.start();
@@ -256,21 +214,39 @@ public class MedicalApp {
                 }
                 break;
             case 5: //Track User Sign in & Date & Time
-                //File dataLog = new File("w", "patientFiles.text");
+                //File virusTestingFile = new File("w", "patientFiles.text");
                 //Date newDate;
-                File datalog = new File("/Users/nicholasmoore/Documents/Hospital/DataLog.txt");
-                if (!datalog.exists()) {
-                    datalog.createNewFile();
-                    System.out.println("File Created: " + datalog.getName());
+                File virusTestingFile = new File("/Users/nicholasmoore/Documents/Hospital/virusTestingFile.txt");
+                File medicalEmergencyFile = new File("/Users/nicholasmoore/Documents/Hospital/medicalEmergencyFile.txt");
+                File healthScreeningFile = new File("/Users/nicholasmoore/Documents/Hospital/healthScreeningFile.txt");
+
+                try {
+                    BufferedWriter myWriter = new BufferedWriter(new FileWriter(virusTestingFile));
+                    myWriter.write("Hello World");
+                    for(Patient patient: testing) {
+                        myWriter.write(patient.lastName + ", " + patient.firstName);
+                    }
+                    myWriter.close();
+                }catch(Exception e){
+                    System.out.println(e);
+                } finally {
+                    System.out.println("File Updated");
                 }
+                //If File Doesnt Exist, Create It 
+                if (!virusTestingFile.exists()) {
+                    virusTestingFile.createNewFile();
+                    System.out.println("File Created: " + virusTestingFile.getName());
+                }
+                //If Already Exist 
                 else {
-                    System.out.println("File '" + datalog.getName() + "' already exists.");
+                    System.out.println("File '" + virusTestingFile.getName() + "' already exists.");
                 }
-                FileWriter writingTo = new FileWriter("dataLog.txt");
+                //FileWriter writingTo = new FileWriter("virusTestingFile.txt");
                 System.out.println("Data Saved To File");
-                writingTo.close();
+                //writingTo.close();
                 break;
             case 6: /*Quit System*/
+
                 loop = true;
                 break;
             default:
@@ -295,9 +271,9 @@ public class MedicalApp {
             }
             else {
                 continue;
-                }
             }
         }
+    }
     /* // Remove Duplicates
     private static int[] removeDouble(int[] array) {
         int detective;
