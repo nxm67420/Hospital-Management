@@ -27,15 +27,8 @@ class Navigate implements Runnable {
 
 // Application Main
 public class MedicalApp {
-    //jdbc 
-    String database = connection.DB_URL;
-    String user = connection.user;
-    String password = connection.password;
-    /* Connection conn = (Connection) connection.con; */
-    connection database_connection = new connection(database, user, password);
-
     public static void main(String[] args) throws IOException {
-
+        
         //Start Database
         Thread thread = new Thread(new Runnable(){
             public void run(){
@@ -123,8 +116,57 @@ public class MedicalApp {
 
         
                 */
+                
+                Patient p1 = new Patient(firstName, lastName, id, new Date());
 
-                Patient p1 = new Patient(firstName, lastName, id);
+
+
+                /*Add User To Database
+
+                
+                // Statements
+                String sql = "INSERT INTO waitroom(firstName, lastName, id, session_date, time)" + "VALUES(?,?,?,?,?)";
+
+                // Create a Statement
+                PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
+                preparedStatement.setString(1, topic);
+                preparedStatement.setString(2, building);
+                preparedStatement.setString(3, room);
+                preparedStatement.setString(4, date);
+                preparedStatement.setString(5, timeOf);
+
+                //Execution Returns Amount of Results
+                int resultSet = preparedStatement.executeUpdate();
+
+                //Server Connection
+                //connectToClient(topic, building, room, date, timeOf);
+                //connectToServer();
+
+
+                    if(resultSet > 0) {
+                        System.out.println("Session Topic: " + topic);
+                        System.out.println("Building Name: " + building);
+                        System.out.println("Room Number: " + room);
+                        System.out.println("Date: " + date);
+                        System.out.println("Time: " + timeOf);
+                    }
+                    else{
+                        System.out.println("No Results Found");
+                        return;
+                    }
+            }
+            catch (SQLException e) {
+                System.out.println("SQL Error Found : " + e);
+            }
+            catch (Exception e) {
+                System.out.println("OTHER ERRORS : " + e);
+            }
+            */
+                
+                
+
+
 
                 //Added To WaitList
                 waitRoom.add(p1);
@@ -250,25 +292,38 @@ public class MedicalApp {
                 for (Patient p : checkUp) {
                     System.out.println(p.toString());
                 }
+
                 break;
 
             //Track User Sign in, & Date & Time
             case 5:
+                int patientCounter = 1;
+                System.out.println("Would you like a copy of todays log?");
+                String response = scan.next();
 
-               try {
-                   File file = new File("Patients.txt");
+                if(response.equals("yes") || response.equals("y") || response.equals("Yes")){
+                    try {
+                        File file = new File("DailyLog.txt");
 
-                   if (!file.exists()) {
-                       file.createNewFile();
-                   }
-                   PrintWriter writer = new PrintWriter(file);
-                   writer.println("Hello World");
-                   writer.close();
-                   System.out.println("Completed");
-               } catch (Exception e) {
-                   //TODO: handle exception
-                   e.printStackTrace();
-               }
+                        if (!file.exists()) {
+                            file.createNewFile();
+                        }
+                        PrintWriter writer = new PrintWriter(file);
+                        writer.println("\t" + "First_Name\t" + "Last_Name\t" + "ID\t\t\t" + "Date\'Time");
+                        for(Patient patient : waitRoom){
+                                writer.println(patientCounter  + ".\t" + 
+                                                patient.firstName.substring(0, 5) + "\t\t" + 
+                                                    patient.lastName.substring(0, 5) + "\t\t" +   
+                                                        patient.idNum + "\t\t\t" + 
+                                                            patient.timeStamp);
+                                patientCounter++;
+                        }
+                        writer.close();
+                        System.out.println("Completed");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 break;
             case 6: /*Quit System*/
@@ -277,7 +332,7 @@ public class MedicalApp {
             default:
                 System.out.println("Invalid Option");
                 break;
-            }
+           }
         } while(!loop);
         scan.close();//Close Scanner 'Memory Leak'
     } //End of Main()

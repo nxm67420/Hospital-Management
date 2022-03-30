@@ -10,7 +10,7 @@ public class Patient {
     public String firstName, lastName, preffix;
     public int age, counter;
     public int idNum;
-    public Date birthday, timeStamp = new Date();
+    public Date timeStamp = new Date();
 
     // Constructors
     public Patient() {
@@ -21,10 +21,11 @@ public class Patient {
         this.idNum = id;
     }
 
-    public Patient(String name1, String name2, int id) {
+    public Patient(String name1, String name2, int id, Date timeStamp) {
         this.firstName = name1;
         this.lastName = name2;
         this.idNum = id;
+        this.timeStamp = new Date();
         counter += 1;
         System.out.println("Patient Added: " + timeStamp);
     }
@@ -52,6 +53,8 @@ public class Patient {
     // Displays User Information
     @Override
     public String toString() {
-        return "\nFirst Name : " + firstName + "\nLast Name : " + lastName + "\nID : " + idNum;
+        return "\nFirst Name : " + firstName +
+                "\nLast Name : " + lastName +
+                "\nID : " + idNum;
     }
 }
