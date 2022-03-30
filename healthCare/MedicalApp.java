@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.*;
 import java.util.Scanner;
@@ -26,20 +27,32 @@ class Navigate implements Runnable {
 
 // Application Main
 public class MedicalApp {
-    //jdbc
+    //jdbc 
     String database = connection.DB_URL;
     String user = connection.user;
     String password = connection.password;
-    Connection conn = (Connection) connection.con;
+    /* Connection conn = (Connection) connection.con; */
+    connection database_connection = new connection(database, user, password);
+
     public static void main(String[] args) throws IOException {
 
+        //Start Database
+        Thread thread = new Thread(new Runnable(){
+            public void run(){
+                connection.Connect();
+                System.out.println("Database Connected From Main");
+            }
+        });
+        //start the thread
+        thread.start(); 
+
         //Thread
-        Navigate t1 = new Navigate();
+        /* Navigate t1 = new Navigate();
         Thread thread = new Thread(t1);
-        thread.start();
+        thread.start(); */
         
         //Testing Purposes
-        System.out.println(thread.isAlive());
+        //System.out.println(thread.isAlive());
 
         // Variables
         Random randomItem = new Random();
@@ -77,19 +90,40 @@ public class MedicalApp {
             int choice = scan.nextInt();
             switch(choice){
                 case 1:
-                //Insert User First Name
+
+                // Insert User First Name
                 System.out.print("\nEnter First Name (Enter \"done\" to quit): ");
+                while (!scan.hasNext("[A-Za-z]+")) {
+                    System.out.println("Sorry, character values only [A-Z]!\n");
+                    System.out.print("\nEnter First Name (Enter \"done\" to quit): ");
+                    scan.next();
+                }
                 String firstName = scan.next();
 
-                if(firstName.toLowerCase().equals("done")){
+                if (firstName.toLowerCase().equals("done")) {
                     break;
                 }
+                
                 //Insert User Last Name
                 System.out.print("Enter Last Name : ");
+                while (!scan.hasNext("[A-Za-z]+")) {
+                    System.out.println("Sorry, character values only [A-Z]!\n");
+                    System.out.print("\nEnter Last Name : ");
+                    scan.next();
+                }
+                //Last Name Confirmed
                 String lastName = scan.next();
 
                 //Give Patient ID
                 int id = randomItem.nextInt(1001);
+
+                //Iterate Through List, If 'id' == 'id', Randomize New 'id'
+                /*
+                
+
+        
+                */
+
                 Patient p1 = new Patient(firstName, lastName, id);
 
                 //Added To WaitList
@@ -132,8 +166,10 @@ public class MedicalApp {
                         break;
                 }//End of Inner Switch Case
             }//End of Switch Case 1
-                break;
-            case 2: /*Remove Patient */
+            break;
+        
+            /*Remove Patient */
+            case 2: 
                 // Last Name of Patient
                 System.out.print("Enter Last Name of Patient: ");
                 String secondName = scan.next();
@@ -146,22 +182,24 @@ public class MedicalApp {
                 Iterator<Patient> it = waitRoom.listIterator();
                 while(it.hasNext()){
                     //for (Iterator<Patient> it2 = checkUp.iterator(); it2.hasNext();){
-	                    Patient patient = it.next();
-                        if (secondName.equals(patient.getLastName()) && checkID == patient.getID()) {
-                            System.out.println("\n-UPDATE-\n" + patient.getFirstName().toUpperCase() + " "
-                                    + patient.getLastName().toUpperCase() + " \"Removed\" ");
-                            System.out.println(new Date());
-                            waitRoom.remove(patient);
-                            testing.remove(patient);
-                            emergency.remove(patient);
-                            checkUp.remove(patient);
-                            wait--;
-                            break;
-                        }
+                    Patient patient = it.next();
+                    if (secondName.equals(patient.getLastName()) && checkID == patient.getID()) {
+                        System.out.println("\n-UPDATE-\n" + patient.getFirstName().toUpperCase() + " "
+                                + patient.getLastName().toUpperCase() + " \"Removed\" ");
+                        System.out.println(new Date());
+                        waitRoom.remove(patient);
+                        testing.remove(patient);
+                        emergency.remove(patient);
+                        checkUp.remove(patient);
+                        wait--;
+                        break;
                     }
-                    //}
+                }
+                //}
                 break;
-            case 3://Check Patient Status
+
+            //Check Patient Status
+            case 3:
                 
                 //Retrieve Last Name
                 System.out.print("\nCheck Patient Status\n1.Enter Last Name : ");
@@ -213,47 +251,34 @@ public class MedicalApp {
                     System.out.println(p.toString());
                 }
                 break;
-            case 5: //Track User Sign in & Date & Time
-                //File virusTestingFile = new File("w", "patientFiles.text");
-                //Date newDate;
-                File virusTestingFile = new File("/Users/nicholasmoore/Documents/Hospital/virusTestingFile.txt");
-                File medicalEmergencyFile = new File("/Users/nicholasmoore/Documents/Hospital/medicalEmergencyFile.txt");
-                File healthScreeningFile = new File("/Users/nicholasmoore/Documents/Hospital/healthScreeningFile.txt");
 
-                try {
-                    BufferedWriter myWriter = new BufferedWriter(new FileWriter(virusTestingFile));
-                    myWriter.write("Hello World");
-                    for(Patient patient: testing) {
-                        myWriter.write(patient.lastName + ", " + patient.firstName);
-                    }
-                    myWriter.close();
-                }catch(Exception e){
-                    System.out.println(e);
-                } finally {
-                    System.out.println("File Updated");
-                }
-                //If File Doesnt Exist, Create It 
-                if (!virusTestingFile.exists()) {
-                    virusTestingFile.createNewFile();
-                    System.out.println("File Created: " + virusTestingFile.getName());
-                }
-                //If Already Exist 
-                else {
-                    System.out.println("File '" + virusTestingFile.getName() + "' already exists.");
-                }
-                //FileWriter writingTo = new FileWriter("virusTestingFile.txt");
-                System.out.println("Data Saved To File");
-                //writingTo.close();
+            //Track User Sign in, & Date & Time
+            case 5:
+
+               try {
+                   File file = new File("Patients.txt");
+
+                   if (!file.exists()) {
+                       file.createNewFile();
+                   }
+                   PrintWriter writer = new PrintWriter(file);
+                   writer.println("Hello World");
+                   writer.close();
+                   System.out.println("Completed");
+               } catch (Exception e) {
+                   //TODO: handle exception
+                   e.printStackTrace();
+               }
+
                 break;
             case 6: /*Quit System*/
-
                 loop = true;
                 break;
             default:
                 System.out.println("Invalid Option");
                 break;
             }
-        } while (!loop);
+        } while(!loop);
         scan.close();//Close Scanner 'Memory Leak'
     } //End of Main()
     
