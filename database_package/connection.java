@@ -18,7 +18,7 @@ public class connection {
     /* public static String url = "jdbc:mysql://localhost:3306/";
     public static String ssl = "?autoReconnect=true&useSSL=false";
     public static String dbName = "hospital_management"; */
-    public static String user = "root";
+    private static String user = "root";
     public static String password = "";
     public static String url = "";
     //protected

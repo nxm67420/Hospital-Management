@@ -1,24 +1,19 @@
+//Packages
 package patient;
 
+//Imports
 import java.util.Date;
+import java.util.ArrayList;
 
-// Class 2
 public class Patient {
 
-    // Variables
-    // Disease type;
-    public String firstName, lastName, preffix;
-    public int age, counter;
-    public int idNum;
-    public Date timeStamp = new Date();
+    private String firstName, lastName;
+    private int counter;
+    private int idNum;
+    private Date timeStamp = new Date();
 
     // Constructors
     public Patient() {
-    }
-
-    public Patient(String last, int id) {
-        this.lastName = last;
-        this.idNum = id;
     }
 
     public Patient(String name1, String name2, int id, Date timeStamp) {
@@ -30,24 +25,43 @@ public class Patient {
         System.out.println("Patient Added: " + timeStamp);
     }
 
-    // Get First Name
+    public Patient(String last, int id) {
+        this.lastName = last;
+        this.idNum = id;
+    }
+
+    public void setFirstName(String first) {
+        this.firstName = first;
+    }
+
     public String getFirstName() {
         return firstName;
     }
 
-    // Get Last Name
+    public void setLastName(String last) {
+        this.lastName = last;
+    }
+
     public String getLastName() {
         return lastName;
     }
 
-    // Get User ID
     public int getID() {
         return idNum;
+    }
+
+    public Date getTimeCreated() {
+        return timeStamp;
     }
 
     // Count Amount of Patients
     public int getCount() {
         return counter;
+    }
+
+    public void removePatient(Patient patient, ArrayList<Patient> array){
+        array.remove(patient);
+        counter--;
     }
 
     // Displays User Information
